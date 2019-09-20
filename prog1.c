@@ -28,4 +28,40 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 	}
+
+// Fibonacci child process
+	if(getpid() = pid[0])
+	{
+
+		int fibNum = argv[1];
+		sprintf(buf, "Fibonacci Process Started\nInput Number %d\n", fibNum);
+		write(1, buf, strlen(buf));
+		if(fibonacci(fibNum) < 0)
+		{
+			return 1;
+		}
+		sprintf(buf, "Fibonacci Number f(%d) is %d\n", fibNum, fibonacci(fibNum));
+		return 0;	
+	}
+
+	int fibonacci(int fibNum)
+	{
+		if(fibNum < 1)
+		{
+			sprintf(buf, "Invalid Fibonacci number\n");
+			write(1, buf, strlen(buf));
+			return -1;;
+		}else if(fibNum <= 2)
+		{
+			sprintf(buf, "Fibonacci Number f(%d) is 1\n", fibNum);
+			write(1, buf, strlen(buf));
+			return 0;
+		}
+		if(fibNum > 2)
+		{
+		}else
+		{
+
+		}	
+	}
 }
