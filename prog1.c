@@ -1,11 +1,14 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 #include <ctype.h>
 #include <sys/wait.h>
 
 #define NUMBER_OF_CHILDREN 4
+#define PI 3.1415926
 
 int fibonacci(int fibNum)
 {
@@ -73,5 +76,32 @@ int main(int argc, char **argv)
 		write(1, buf, strlen(buf));
 		return 0;	
 	}
+
+// Buffon's Needle child process
+	if(getpid() == process[1])
+	{
+		sprintf(buf, "Buffon's Needle Process Started\nInput Number %d\n", arguments[2]);
+		write(1, buf, strlen(buf));
+
+		int timesCrossingLine = 0, G = 1;
+		double d, a;
+		double probability;
+		srand(time(NULL));
+		for(int i = 0; i < arguments[2]; i++)
+		{
+			d = rand() / (double)RAND_MAX;
+			a = rand() / ((double)RAND_MAX) * (2.0 * acos(-1.0));
+			if(d + sin(a) < 0 || d + sin(a) > G)
+			{
+				timesCrossingLine++;	
+			}	
+		}
+		probability = ((double)timesCrossingLine) / ((double) arguments[2]);
+		
+		sprintf(buf, "Times Crossing Line %d\nEstimated Probability is %lf\nBuffon's Needle Process Exits\n", timesCrossingLine, probability);
+		write(1, buf, strlen(buf));	
+		return 0;
+	}
+	
 	wait(NULL);
 }	
