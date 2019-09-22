@@ -21,7 +21,7 @@ int fibonacci(int fibNum)
 
 int main(int argc, char **argv)
 {
-	int numberOfArgs = argc;
+	int numberOfArgs = argc, status;
 	int arguments[numberOfArgs];
 	char buf[100];
 	pid_t pid[NUMBER_OF_CHILDREN];
@@ -56,31 +56,33 @@ int main(int argc, char **argv)
 
 
 // Fibonacci child process
+// Prints with 3 leading spaces
 	if(getpid() == process[0])
 	{
 
 		int fibVal;
 		int fibNum = arguments[1];
-		sprintf(buf, "Fibonacci Process Started\nInput Number %d\n", fibNum);
+		sprintf(buf, "   Fibonacci Process Started\n   Input Number %d\n", fibNum);
 		write(1, buf, strlen(buf));
 		
 		if(fibNum < 1)
 		{
-			sprintf(buf, "Invalid Fibonacci number\n");
+			sprintf(buf, "   Invalid Fibonacci number\n");
 			write(1, buf, strlen(buf));
 			return -1;;
 		}
 		
 		fibVal = fibonacci(fibNum);
-		sprintf(buf, "Fibonacci Number f(%d) is %d\nFibonacci Process Exits\n", fibNum, fibVal);
+		sprintf(buf, "   Fibonacci Number f(%d) is %d\n   Fibonacci Process Exits\n", fibNum, fibVal);
 		write(1, buf, strlen(buf));
 		return 0;	
 	}
 
 // Buffon's Needle child process
+// Prints with 6 leading spaces
 	if(getpid() == process[1])
 	{
-		sprintf(buf, "Buffon's Needle Process Started\nInput Number %d\n", arguments[2]);
+		sprintf(buf, "      Buffon's Needle Process Started\n      Input Number %d\n", arguments[2]);
 		write(1, buf, strlen(buf));
 
 		int timesCrossingLine = 0, G = 1;
@@ -98,10 +100,28 @@ int main(int argc, char **argv)
 		}
 		probability = ((double)timesCrossingLine) / ((double) arguments[2]);
 		
-		sprintf(buf, "Times Crossing Line %d\nEstimated Probability is %lf\nBuffon's Needle Process Exits\n", timesCrossingLine, probability);
+		sprintf(buf, "      Estimated Probability is %lf\n      Buffon's Needle Process Exits\n", probability);
 		write(1, buf, strlen(buf));	
 		return 0;
 	}
+// Area of an Ellipse
+// Prints with 9 leading spaces
+	if(getpid() == process[2])
+	{
+		double  pairs = arguments[5];
+		double x = arguments[3], y = arguments[4];
+		sprintf(buf, "         Ellipse Process Area Started\n         Total Random Number Pairs %f\n         Semi-Major Axis Length %f\n         Semi-Minor Axis Length %f\n", pairs, x, y );
+		write(1, buf, strlen(buf));
+
+		srand(time(NULL));
+		return 0;
+	}
+	if(getpid() == process[3]){ return 0; }
+	for(int q = 0; q < NUMBER_OF_CHILDREN; q++)
+	{
+		sprintf(buf, "%d child exited\n", q);
+		write(1, buf, strlen(buf));
+		wait(&status);
+	}
 	
-	wait(NULL);
 }	
