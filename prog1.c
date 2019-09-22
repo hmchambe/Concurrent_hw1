@@ -1,3 +1,18 @@
+/* ----------------------------------------------------------- */
+/* NAME : Hunter Chambers                  User ID: 81276171   */
+/* DUE DATE : 09/26/2019                                       */
+/* PROGRAM ASSIGNMENT #1                                       */
+/* FILE NAME : prog1.c				               */
+/* PROGRAM PURPOSE :                                           */
+/*    This program forks multiple times to create 4 child      */
+/*    processes that calculate the fibonacci sequence for      */
+/*    a given input, calculates the probability of Buffons     */
+/*    needle equation for a given number of repitions, finds   */
+/*    the area of an ellipse, and makes a histogram of a       */
+/*    pinball game.					       */ 
+/* ----------------------------------------------------------- */
+
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +21,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 
 #define NUMBER_OF_CHILDREN 4
 #define PI 3.1415926
@@ -21,14 +37,14 @@ int fibonacci(int fibNum)
 
 int main(int argc, char **argv)
 {
-	int numberOfArgs = argc, status;
+	int numberOfArgs = argc, status, i;
 	int arguments[numberOfArgs];
 	char buf[100];
 	pid_t pid[NUMBER_OF_CHILDREN];
 	pid_t process[NUMBER_OF_CHILDREN];
-	pid_t child_fib, child_needle, child_ellipse, child_pball;
+	pid_t parentID = getpid();
 
-	for(int i = 0; i < numberOfArgs; i++)
+	for(i = 0; i < numberOfArgs; i++)
 	{
 		arguments[i] = atoi(argv[i]);
 	}
@@ -37,7 +53,7 @@ int main(int argc, char **argv)
 		printf("	Incorrect Number of Arguments....\n		./prog1 n r a b s x y\n");
        		return 1;
 	}
-	for(int i = 0; i < NUMBER_OF_CHILDREN; i++)
+	for(i = 0; i < NUMBER_OF_CHILDREN; i++)
 	{
 		pid[i] = fork();
 		if(pid[i] < 0)
@@ -89,7 +105,7 @@ int main(int argc, char **argv)
 		double d, a;
 		double probability;
 		srand(time(NULL));
-		for(int i = 0; i < arguments[2]; i++)
+		for(i = 0; i < arguments[2]; i++)
 		{
 			d = rand() / (double)RAND_MAX;
 			a = rand() / ((double)RAND_MAX) * (2.0 * acos(-1.0));
@@ -116,12 +132,16 @@ int main(int argc, char **argv)
 		srand(time(NULL));
 		return 0;
 	}
+// Fourth child process
 	if(getpid() == process[3]){ return 0; }
-	for(int q = 0; q < NUMBER_OF_CHILDREN; q++)
+
+	if(getpid() == parentID)
 	{
-		sprintf(buf, "%d child exited\n", q);
-		write(1, buf, strlen(buf));
-		wait(&status);
+		for(int q = 0; q < NUMBER_OF_CHILDREN; q++)
+		{
+			sprintf(buf, "%d child exited\n", q);
+			write(1, buf, strlen(buf));
+			wait(&status);
+		}
 	}
-	
 }	
