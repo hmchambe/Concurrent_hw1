@@ -1,2 +1,2 @@
 all: prog1.c
-	gcc prog1.c -lm -o prog1
+	gcc -std=c99 -g prog1.c -o prog1 -lm
