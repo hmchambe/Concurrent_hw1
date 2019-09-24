@@ -26,6 +26,16 @@
 #define NUMBER_OF_CHILDREN 4
 #define PI 3.1415926
 
+/* ----------------------------------------------------------- */
+/* FUNCTION  fibonacci                                         */
+/*     This function computes the fibonacci sequence	       */
+/*     recursively           	                               */
+/* PARAMETER USAGE :                                           */
+/*	int fibNum => this is which index of the fibonacci     */
+/*		sequence that the value is being computed for  */
+/* FUNCTION CALLED :                                           */
+/*    [none]					               */
+/* ----------------------------------------------------------- */
 int fibonacci(int fibNum)
 {
 	if(fibNum <= 1)
@@ -130,7 +140,9 @@ int main(int argc, char **argv)
 		write(1, buf, strlen(buf));
 
 		srand(time(NULL));
+		
 		return 0;
+
 	}
 // Fourth child process
 	if(getpid() == process[3]){ return 0; }
