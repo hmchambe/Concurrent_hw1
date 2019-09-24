@@ -134,12 +134,17 @@ int main(int argc, char **argv)
 // Prints with 9 leading spaces
 	if(getpid() == process[2])
 	{
-		double  pairs = arguments[5];
-		double x = arguments[3], y = arguments[4];
+		double a = arguments[3], b = arguments[4];
+		double s = arguments[5];
+		
 		sprintf(buf, "         Ellipse Process Area Started\n         Total Random Number Pairs %f\n         Semi-Major Axis Length %f\n         Semi-Minor Axis Length %f\n", pairs, x, y );
 		write(1, buf, strlen(buf));
 
 		srand(time(NULL));
+		double x, y;
+		x = rand() % a;
+		y = rand() % b;
+		
 		
 		return 0;
 
