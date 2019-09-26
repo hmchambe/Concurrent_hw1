@@ -72,6 +72,10 @@ int main(int argc, char **argv)
 		printf("	Incorrect Number of Arguments....\n		./prog1 n r a b s x y\n");
        		return 1;
 	}
+
+	sprintf(buf, "Main Process Started\nFibonacci Input = %d\nBuffon's Needle Iterations = %d\nTotal Random Number Pairs = %d\nSemi-Major Axis Length = %d\nSemi-Minor Axis Length = %d\nNumber of Bins = %d\nNumber of Ball Droppings = %d\n", arguments[1], arguments[2], arguments[3], arguments[4], arguments[5], arguments[6], arguments[7]);
+	write(1, buf, strlen(buf));
+
 	for(i = 0; i < NUMBER_OF_CHILDREN; i++)
 	{
 		pid[i] = fork();
@@ -83,6 +87,22 @@ int main(int argc, char **argv)
 		}else if(pid[i] == 0)
 		{
 			process[i] = getpid();
+			switch(i)
+			{
+				case 0:
+					sprintf(buf, "Fibonacci Process Created\n");
+					break;
+				case 1:
+					sprintf(buf, "Buffon's Needle Process Created\n");
+					break;
+				case 2:
+					sprintf(buf, "Ellipse Area Process Created\n");
+					break;
+				case 3:
+					sprintf(buf, "Pinball Process Created\n");
+					break;
+			}
+			write(1, buf, strlen(buf));
 			break;
 		}
 
@@ -176,8 +196,10 @@ int main(int argc, char **argv)
 /* Fourth child process */
 	if(getpid() == process[3])
 	{ 
+		
 		int x = arguments[6], y = arguments[7], pins = x - 1, i, j, finalBin = 1;
-		int maxVal = 0, maxBin = 0, asterisks[x];
+		char asterisks[x];
+		int maxVal = 0, maxBin = 0, asteriskNumber[x];
  		signed long int bins[x];
 		double direction, percentage[x];
 		sprintf(buf, "Simple Pinball Process Started\nNumber of Bins %d\nNumber of Ball Droppings %d\n", x, y);
@@ -211,28 +233,29 @@ int main(int argc, char **argv)
 			if(bins[i] > maxVal)
 			{
 				maxVal = bins[i];
-				maxBin = i + 1;
+				maxBin = i;
 			}
-			sprintf(buf, "bins[%d]: %ld\n", i-1, bins[i-1]);
-			write(1, buf, strlen(buf));
 		}	
 		for(i = 0; i < x; i++)
 		{	/* Percentage for each bin for histogram */
-			percentage[i] = (float) bins[i] / y;
-			sprintf(buf, "percentage[%d]: %lf\n", i, percentage[i]);
-			write(1, buf, strlen(buf));
+			percentage[i] = ((float) bins[i] / y);
 		}
 		for(i = 0; i < x; i++)
 		{	/* histogram for pinball */ 
-			asterisks[i] = 50 * (percentage[bins[i]] / percentage[bins[maxBin]]);
-			sprintf(buf, "%3d-(%7ld)-(%5.2f)|\n", i+1, bins[i], percentage[i]);
-			for(j = 0; j < asterisks[i]; j++)
+			asteriskNumber[i] = ceil(50 * (percentage[i] / percentage[maxBin]));
+			if(asteriskNumber[i] > 50)
 			{
-				sprintf(buf, "*");
+				asteriskNumber[i]--;
 			}
-			sprintf(buf, "\n");
+			sprintf(buf, "%3d-(%7ld)-(%5.2f\%)|", i+1, bins[i], percentage[i] * 100);
+			for(j = 0; j < asteriskNumber[i]; j++)
+			{
+				strcat(buf, "*");
+			}
+			strcat(buf, "\n");			
 			write(1, buf, strlen(buf));
-
+			sprintf(buf, "AsteriskNumber: %d\n", asteriskNumber[i]);
+			write(1, buf, strlen(buf));
 		}
 		return 0; 
 	}
