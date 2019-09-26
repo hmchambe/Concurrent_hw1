@@ -45,11 +45,20 @@ int fibonacci(int fibNum)
 	return (fibonacci(fibNum - 1) + fibonacci(fibNum - 2));
 }
 
+/* ----------------------------------------------------------- */
+/* FUNCTION  main                                              */
+/*     This function is the parent process that forks multiple */
+/*     times to run given processes                            */
+/* PARAMETER USAGE :                                           */
+/*	int argc => number of command line args   	       */
+/* FUNCTION CALLED :                                           */
+/*    fibonacci					               */
+/* ----------------------------------------------------------- */
 int main(int argc, char **argv)
 {
 	int numberOfArgs = argc, status, i;
 	int arguments[numberOfArgs];
-	char buf[100];
+	char buf[300];
 	pid_t pid[NUMBER_OF_CHILDREN];
 	pid_t process[NUMBER_OF_CHILDREN];
 	pid_t parentID = getpid();
@@ -81,8 +90,8 @@ int main(int argc, char **argv)
 
 
 
-// Fibonacci child process
-// Prints with 3 leading spaces
+/* Fibonacci child process */
+/* Prints with 3 leading spaces */
 	if(getpid() == process[0])
 	{
 
@@ -104,8 +113,8 @@ int main(int argc, char **argv)
 		return 0;	
 	}
 
-// Buffon's Needle child process
-// Prints with 6 leading spaces
+/* Buffon's Needle child process */
+/* Prints with 6 leading spaces */
 	if(getpid() == process[1])
 	{
 		sprintf(buf, "      Buffon's Needle Process Started\n      Input Number %d\n", arguments[2]);
@@ -130,35 +139,112 @@ int main(int argc, char **argv)
 		write(1, buf, strlen(buf));	
 		return 0;
 	}
-// Area of an Ellipse
-// Prints with 9 leading spaces
+/* Area of an Ellipse */
+/* Prints with 9 leading spaces */
 	if(getpid() == process[2])
 	{
-		double a = arguments[3], b = arguments[4];
-		double s = arguments[5];
-		
-		sprintf(buf, "         Ellipse Process Area Started\n         Total Random Number Pairs %f\n         Semi-Major Axis Length %f\n         Semi-Minor Axis Length %f\n", pairs, x, y );
+		int i = 0;
+		double finalResult, actualArea, x, y; 
+		int s = arguments[5], t = 0, a = arguments[3], b = arguments[4];
+		sprintf(buf, "         Ellipse Process Area Started\n         Total Random Number Pairs %d\n", s);
 		write(1, buf, strlen(buf));
 
 		srand(time(NULL));
-		double x, y;
-		x = rand() % a;
-		y = rand() % b;
 		
-		
+		for(i = 0; i < s; i++)
+		{
+			
+			x = ((float) rand()/RAND_MAX) * a;
+			y = ((float) rand()/RAND_MAX) * b;
+
+			if(((float)pow(x,2)/pow(a,2))+((float)pow(y,2)/pow(b,2)) <= 1.0)
+			{
+				t++;
+			}
+		}
+		sprintf(buf,"         Semi-Major Axis Length %d\n         Semi-Minor Axis Length %d\n         Total Hits %d\n", a, b, t);
+		write(1, buf, strlen(buf));
+		finalResult = (((float)t/s)*a*b)*4;
+		actualArea = acos(-1.0)*a*b;
+
+		sprintf(buf,"         Estimated Area is %2.5lf\n         Actual Area is %2.5lf\n         Ellipse Area Process Exits\n", finalResult, actualArea);
+		write(1, buf, strlen(buf));
+
 		return 0;
 
 	}
-// Fourth child process
-	if(getpid() == process[3]){ return 0; }
+/* Fourth child process */
+	if(getpid() == process[3])
+	{ 
+		int x = arguments[6], y = arguments[7], pins = x - 1, i, j, finalBin = 1;
+		int maxVal = 0, maxBin = 0, asterisks[x];
+ 		signed long int bins[x];
+		double direction, percentage[x];
+		sprintf(buf, "Simple Pinball Process Started\nNumber of Bins %d\nNumber of Ball Droppings %d\n", x, y);
+		write(1, buf, strlen(buf));
+
+		for(i = 0; i < x; i++)
+		{
+			bins[i] = 0;
+		}
+		for(i = 0; i < y; i++) /* Iterates for how many balls there are */
+		{
+			for(j = 0; j < pins; j++) /* Iterates as many times as there are pins */
+			{
+				direction = ((float)rand() / RAND_MAX);
+				if(direction > 0.5)
+				{ /* ball goes right */
+					finalBin++;
+				}
+			}
+			bins[finalBin - 1]++; /* tally for which bin the ball ended up in */
+			finalBin = 1;
+			if((i % 30000) == 0)
+			{	/* New random seed */
+				srand(time(NULL));
+			}
+		}
+		maxBin = 0;
+		maxVal = bins[0];
+		for(i = 1; i < x; i++)
+		{	/* Finding bin with max hits */
+			if(bins[i] > maxVal)
+			{
+				maxVal = bins[i];
+				maxBin = i + 1;
+			}
+			sprintf(buf, "bins[%d]: %ld\n", i-1, bins[i-1]);
+			write(1, buf, strlen(buf));
+		}	
+		for(i = 0; i < x; i++)
+		{	/* Percentage for each bin for histogram */
+			percentage[i] = (float) bins[i] / y;
+			sprintf(buf, "percentage[%d]: %lf\n", i, percentage[i]);
+			write(1, buf, strlen(buf));
+		}
+		for(i = 0; i < x; i++)
+		{	/* histogram for pinball */ 
+			asterisks[i] = 50 * (percentage[bins[i]] / percentage[bins[maxBin]]);
+			sprintf(buf, "%3d-(%7ld)-(%5.2f)|\n", i+1, bins[i], percentage[i]);
+			for(j = 0; j < asterisks[i]; j++)
+			{
+				sprintf(buf, "*");
+			}
+			sprintf(buf, "\n");
+			write(1, buf, strlen(buf));
+
+		}
+		return 0; 
+	}
 
 	if(getpid() == parentID)
 	{
-		for(int q = 0; q < NUMBER_OF_CHILDREN; q++)
+		int q;
+		for(q = 0; q < NUMBER_OF_CHILDREN; q++)
 		{
-			sprintf(buf, "%d child exited\n", q);
-			write(1, buf, strlen(buf));
-			wait(&status);
+			wait(&status); /* waiting for all child processes */
 		}
+		
+		return 0;
 	}
 }	
