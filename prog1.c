@@ -24,7 +24,6 @@
 #include <sys/types.h>
 
 #define NUMBER_OF_CHILDREN 4
-#define PI 3.1415926
 
 /* ----------------------------------------------------------- */
 /* FUNCTION  fibonacci                                         */
@@ -55,7 +54,7 @@ int fibonacci(int fibNum)
 /*    fibonacci					               */
 /* ----------------------------------------------------------- */
 int main(int argc, char **argv)
-{
+{  /* Instantiations */
 	int numberOfArgs = argc, status, i;
 	int arguments[numberOfArgs];
 	char buf[300];
@@ -77,7 +76,7 @@ int main(int argc, char **argv)
 	write(1, buf, strlen(buf));
 
 	for(i = 0; i < NUMBER_OF_CHILDREN; i++)
-	{
+	{  /* Storing PID's and handling prints */
 		pid[i] = fork();
 		if(pid[i] < 0)
 		{
@@ -120,7 +119,7 @@ int main(int argc, char **argv)
 		sprintf(buf, "   Fibonacci Process Started\n   Input Number %d\n", fibNum);
 		write(1, buf, strlen(buf));
 		
-		if(fibNum < 1)
+		if(fibNum < 1)  /* Check */
 		{
 			sprintf(buf, "   Invalid Fibonacci number\n");
 			write(1, buf, strlen(buf));
@@ -130,7 +129,7 @@ int main(int argc, char **argv)
 		fibVal = fibonacci(fibNum);
 		sprintf(buf, "   Fibonacci Number f(%d) is %d\n   Fibonacci Process Exits\n", fibNum, fibVal);
 		write(1, buf, strlen(buf));
-		return 0;	
+		return 0;	/* Exiting Process */
 	}
 
 /* Buffon's Needle child process */
@@ -143,7 +142,7 @@ int main(int argc, char **argv)
 		int timesCrossingLine = 0, G = 1;
 		double d, a;
 		double probability;
-		srand(time(NULL));
+		srand(time(NULL)); /* Seeding random numbers */
 		for(i = 0; i < arguments[2]; i++)
 		{
 			d = rand() / (double)RAND_MAX;
@@ -157,7 +156,7 @@ int main(int argc, char **argv)
 		
 		sprintf(buf, "      Estimated Probability is %lf\n      Buffon's Needle Process Exits\n", probability);
 		write(1, buf, strlen(buf));	
-		return 0;
+		return 0;/* Exiting Process */
 	}
 /* Area of an Ellipse */
 /* Prints with 9 leading spaces */
@@ -190,10 +189,10 @@ int main(int argc, char **argv)
 		sprintf(buf,"         Estimated Area is %2.5lf\n         Actual Area is %2.5lf\n         Ellipse Area Process Exits\n", finalResult, actualArea);
 		write(1, buf, strlen(buf));
 
-		return 0;
+		return 0; /* Exiting Process */
 
 	}
-/* Fourth child process */
+/* Fourth child process -- PINBALL */
 	if(getpid() == process[3])
 	{ 
 		
@@ -254,20 +253,23 @@ int main(int argc, char **argv)
 			}
 			strcat(buf, "\n");			
 			write(1, buf, strlen(buf));
-			sprintf(buf, "AsteriskNumber: %d\n", asteriskNumber[i]);
-			write(1, buf, strlen(buf));
 		}
+		sprintf(buf, "Simple Pinball Process Exits\n");
+		write(1, buf, strlen(buf));
 		return 0; 
 	}
 
 	if(getpid() == parentID)
 	{
 		int q;
+		sprintf(buf, "Main Process Waits\n");
+		write(1, buf, strlen(buf));
 		for(q = 0; q < NUMBER_OF_CHILDREN; q++)
 		{
 			wait(&status); /* waiting for all child processes */
 		}
-		
-		return 0;
+		sprintf(buf, "Main Process Exits\n");
+		write(1, buf, strlen(buf));
+		return 0; /* Exiting Main Process */
 	}
 }	

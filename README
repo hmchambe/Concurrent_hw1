@@ -1,24 +1,53 @@
-# Concurrent homework 1
-# ./prog1 n r a b s x y
+ Concurrent homework 1
+ ./prog1 n r a b s x y
 
-# A program that takes seven positive integers n, r, a, b, s, x and y from its command line arguments, creates four child processes, waits for them to complete, and exits. 
+ A program that takes seven positive integers n, r, a, b, s, x and y from its command line arguments, 
+ creates four child processes, waits for them to complete, and exits. 
 
-# The first process computes the n-th Fibonacci number fn using recursion.
-# The second process finds the solution of Buffon's needle problem by throwing a needle r times
-# The third process computes the area of an ellipse
-# The fourth process simulates a simple pinball game.
-#
-# Question 1
-# 	There are 4 child processes created
-# 	The parent forks a child, then breaks the loop, then the child that was created 
-# 	forks another child, and breaks the loop, and so on
-# 	
-# 	Parent -> Proc1 -> Proc2 -> Proc3 -> Proc4
-#		|	|	 |	  |
-#		V	V	 V	  V
-#		Parent  Proc1	 Proc2	  Proc3
-#		Breaks	Breaks   Breaks	  Breaks
-#		Within  W/in If	 W/in If  W/in If
-#		If Loop	
-# Question 2
-# 	There are 
+ The first process computes the n-th Fibonacci number fn using recursion.
+ The second process finds the solution of Buffon's needle problem by throwing a needle r times
+ The third process computes the area of an ellipse
+ The fourth process simulates a simple pinball game.
+
+ ---------------------------------Question 1---------------------------------
+ 	There are 4 child processes created
+ 	The parent forks a child, then breaks the loop, then the child that was created 
+ 	forks another child, and breaks the loop, and so on
+ 	
+ 	Parent -> Proc1 -> Proc2 -> Proc3 -> Proc4
+		|	|	 |	  |
+		V	V	 V	  V
+		Parent  Proc1	 Proc2	  Proc3
+		Breaks	Breaks   Breaks	  Breaks
+		Within  W/in If	 W/in If  W/in If
+		If Loop	
+ ----------------------------------Question 2---------------------------------
+ 	There are 4 child processes created
+	This is very similar to the previous program except instead
+		of the parent process breaking out of the loop,
+		the child process breaks and the parent creates
+		multiple other child processes
+
+	Parent -> Proc1 -> break and print
+		->Proc2 -> break and print
+		->Proc3 -> break and print
+		->Proc4 -> break and print
+
+ ---------------------------------Question 3---------------------------------
+	The program will only break if the fork() call didn't work. This means that
+		most of the processes created will not break out of the loop. 
+		7 processes are created and each of them continue in the loop, creating 
+		more child processes until n is reached.
+
+	Parent -> Proc1
+	Parent -> Proc2
+	Parent -> Proc3
+	Proc1 -> Proc4
+	Proc1 -> Proc5
+	Proc4 -> Proc6
+	Proc5 -> Proc7
+ ---------------------------------Question 4---------------------------------
+	The type of distribution is a bell curve distribution. I believe that the distribution
+		is as such because it order for it to reach "the ends" it has to "roll" greater
+		than .5 multiple times in a row or "roll" less than .5 multiple times in a row
+		which is less likely.
